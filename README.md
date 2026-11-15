@@ -100,21 +100,8 @@ The current PI and PWM Generator are replaced by a comparator and an S-R flip-fl
 
 ## How to run
 
-**Requirements:** MATLAB with Simulink and Simscape Electrical (the models use the `powergui` block and the Specialized Power Systems library). Add your MATLAB release here: `R20xx`.
+open the .SLX files in your MATLAB simulink and just run..
 
-```bash
-git clone https://github.com/<your-username>/<repo-name>.git
-cd <repo-name>
-```
-
-Then open the stage you want in MATLAB:
-
-```matlab
-cd('1. Rectifier');                                         open_system('PE')
-cd('../2. ACDC Boost Converter');                           open_system('PE_Boost')
-cd('../3. Cascaded PI Control with Inner and Outer Loop');  open_system('PE_version1')
-cd('../4. SR FlipFlop Control');                            open_system('PE_version2')
-```
 
 Stages 3 and 4 need the powergui set to **Discrete** with sample time `1e-6` and a fixed-step solver with step `1e-6`.
 
