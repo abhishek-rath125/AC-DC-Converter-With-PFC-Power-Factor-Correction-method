@@ -31,8 +31,7 @@ The rectified voltage never goes above about 41 V, and the target output is 48 V
 | Parameter | Value |
 |---|---|
 | Source | 50 Hz, `30*sqrt(2)` V peak |
-| Load resistor | _fill in_ |
-| Diode forward voltage / on-resistance | _fill in_ |
+| Load resistor | _1 Ohm_ |
 | Solver | powergui Continuous |
 
 [Next: Stage 2, open-loop boost converter](../2.%20ACDC%20Boost%20Converter/README.md)
