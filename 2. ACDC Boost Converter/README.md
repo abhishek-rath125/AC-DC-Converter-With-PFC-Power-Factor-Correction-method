@@ -33,9 +33,9 @@ Yellow is the output voltage and blue is the load current.
 |---|---|
 | Source | 50 Hz, `30*sqrt(2)` V peak |
 | Duty cycle | 0.5 (constant) |
-| Switching frequency | _fill in_ |
-| Inductor | _fill in_ |
-| Output capacitor | _fill in_ |
+| Switching frequency | _20 kHz_ |
+| Inductor | _1 mH_ |
+| Output capacitor | _120 mF_ |
 | Load | about 3 ohm |
 | Solver | powergui Continuous |
 
