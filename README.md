@@ -6,10 +6,10 @@ The project is organised in four stages. Each stage lives in its own folder with
 
 | Stage | Folder | What it adds | Output voltage | Load current |
 |---|---|---|---|---|
-| 1 | [`1.Rectifier`](01-rectifier) | Diode bridge rectifier with a resistive load | Peak about 40.8 V (rectified, no regulation) | not measured |
-| 2 | [`2.ACDC Boost Converter`](02-ac-dc-boost-converter) | Boost converter after the rectifier, open loop with fixed duty cycle 0.5 | 47.53 V | 15.84 A |
-| 3 | [`3.Cascaded PI Control with Inner and Outer Current and Voltage loop](03-cascaded-pi-control) | Outer PI voltage loop + inner PI current loop + PWM | 47.8 V | 15.93 A |
-| 4 | [`4.SR FlipFlop Control`](04-sr-flipflop-control) | Outer PI voltage loop + current comparator + S-R flip-flop (peak current mode) | 48.01 V | 16 A |
+| 1 | [1. Rectifier](1.%20Rectifier) | Diode bridge rectifier with a resistive load | Peak about 40.8 V (rectified, no regulation) | not measured |
+| 2 | [2. ACDC Boost Converter](2.%20ACDC%20Boost%20Converter) | Boost converter after the rectifier, open loop with fixed duty cycle 0.5 | 47.53 V | 15.84 A |
+| 3 | [3. Cascaded PI Control with Inner and Outer Loop](3.%20Cascaded%20PI%20Control%20with%20Inner%20and%20Outer%20Loop) | Outer PI voltage loop + inner PI current loop + PWM | 47.8 V | 15.93 A |
+| 4 | [4. SR FlipFlop Control](4.%20SR%20FlipFlop%20Control) | Outer PI voltage loop + current comparator + S-R flip-flop (peak current mode) | 48.01 V | 16 A |
 
 Target: 48 V and 16 A (768 W, 3 ohm load).
 
@@ -51,22 +51,22 @@ The theory behind this (why a boost converter, why unity power factor, outer and
 ### Stage 1: Rectifier
 A single-phase diode bridge feeds a resistor. The scope compares the source voltage with the rectified voltage. This confirms the supply (peak about 42.4 V) and shows that the bridge output is a 100 Hz rectified sine that never exceeds the source peak.
 
-![Rectifier output](01-rectifier/images/rectifier_output.png)
+![Rectifier output](1.%20Rectifier/images/rectifier_output.png)
 
 ### Stage 2: Open-loop boost converter
 A MOSFET, inductor, diode and output capacitor are added after the bridge. A constant 0.5 drives the PWM Generator, so the duty cycle is fixed. The output reaches about 47.5 V, but nothing regulates it: any change in load, supply or duty cycle moves it.
 
-![Open-loop boost output](02-ac-dc-boost-converter/images/boost_open_loop_output.png)
+![Open-loop boost output](2.%20ACDC%20Boost%20Converter/images/boost_open_loop_output.png)
 
 ### Stage 3: Cascaded PI control (outer voltage loop and inner current loop)
 The duty cycle is no longer fixed. The voltage PI output becomes the inductor current reference, and a current PI turns the current error into a duty cycle for the PWM Generator.
 
-![Cascaded PI output](03-cascaded-pi-control/images/cascaded_pi_output.png)
+![Cascaded PI output](3.%20Cascaded%20PI%20Control%20with%20Inner%20and%20Outer%20Loop/images/cascaded_pi_output.png)
 
 ### Stage 4: S-R flip-flop (peak current mode)
 The current PI and PWM Generator are replaced by a comparator and an S-R flip-flop. A clock turns the MOSFET on, and the comparator turns it off when the inductor current reaches the reference. The reference is the voltage PI output multiplied by the normalised rectified voltage, so it follows the shape of the supply.
 
-![S-R flip-flop output](04-sr-flipflop-control/images/srff_output.png)
+![S-R flip-flop output](4.%20SR%20FlipFlop%20Control/images/srff_output.png)
 
 > **Note:** these results show **output regulation**. Input power factor and harmonic distortion have not been measured yet; see the [Roadmap](#roadmap).
 
@@ -80,19 +80,19 @@ The current PI and PWM Generator are replaced by a comparator and an S-R flip-fl
 ├── docs/
 │   ├── theory.md                    # Background and control theory
 │   └── troubleshooting.md           # Errors met during the project and their fixes
-├── 01-rectifier/
+├── 1. Rectifier/
 │   ├── README.md
 │   ├── PE.slx                       # (add your model here)
 │   └── images/
-├── 02-ac-dc-boost-converter/
+├── 2. ACDC Boost Converter/
 │   ├── README.md
 │   ├── PE_Boost.slx                 # (add your model here)
 │   └── images/
-├── 03-cascaded-pi-control/
+├── 3. Cascaded PI Control with Inner and Outer Loop/
 │   ├── README.md
 │   ├── PE_version1.slx              # (add your model here)
 │   └── images/
-└── 04-sr-flipflop-control/
+└── 4. SR FlipFlop Control/
     ├── README.md
     ├── PE_version2.slx              # (add your model here)
     └── images/
@@ -110,10 +110,10 @@ cd <repo-name>
 Then open the stage you want in MATLAB:
 
 ```matlab
-cd 01-rectifier;               open_system('PE')
-cd ../02-ac-dc-boost-converter; open_system('PE_Boost')
-cd ../03-cascaded-pi-control;   open_system('PE_version1')
-cd ../04-sr-flipflop-control;   open_system('PE_version2')
+cd('1. Rectifier');                                         open_system('PE')
+cd('../2. ACDC Boost Converter');                           open_system('PE_Boost')
+cd('../3. Cascaded PI Control with Inner and Outer Loop');  open_system('PE_version1')
+cd('../4. SR FlipFlop Control');                            open_system('PE_version2')
 ```
 
 Stages 3 and 4 need the powergui set to **Discrete** with sample time `1e-6` and a fixed-step solver with step `1e-6`.
@@ -143,10 +143,10 @@ Full list: [`docs/troubleshooting.md`](docs/troubleshooting.md).
 |---|---|
 | [`docs/theory.md`](docs/theory.md) | Why a boost converter, unity power factor, outer and inner loops, peak current mode |
 | [`docs/troubleshooting.md`](docs/troubleshooting.md) | Errors met and how they were solved |
-| [`01-rectifier/README.md`](01-rectifier/README.md) | Stage 1 |
-| [`02-ac-dc-boost-converter/README.md`](02-ac-dc-boost-converter/README.md) | Stage 2 |
-| [`03-cascaded-pi-control/README.md`](03-cascaded-pi-control/README.md) | Stage 3 |
-| [`04-sr-flipflop-control/README.md`](04-sr-flipflop-control/README.md) | Stage 4 |
+| [`1. Rectifier/README.md`](1.%20Rectifier/README.md) | Stage 1 |
+| [`2. ACDC Boost Converter/README.md`](2.%20ACDC%20Boost%20Converter/README.md) | Stage 2 |
+| [`3. Cascaded PI Control with Inner and Outer Loop/README.md`](3.%20Cascaded%20PI%20Control%20with%20Inner%20and%20Outer%20Loop/README.md) | Stage 3 |
+| [`4. SR FlipFlop Control/README.md`](4.%20SR%20FlipFlop%20Control/README.md) | Stage 4 |
 
 ## Author and license
 
