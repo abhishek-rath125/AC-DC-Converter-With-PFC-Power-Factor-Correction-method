@@ -40,8 +40,8 @@ The theory behind this (why a boost converter, why unity power factor, outer and
 |---|---|
 | Source | 30 V rms, 50 Hz (block set to `30*sqrt(2)` V peak) |
 | Output target | 48 V, 16 A (768 W), load about 3 ohm |
-| Inductor (stages 3 and 4) | 1 mH |
-| Output capacitor (stages 3 and 4) | 120 mF |
+| Inductor (stages 3 and 4) | 1.0 mH (sized for $\Delta I_L \le 0.60$ A at $D = 0.50$; $90\times L_{crit}$) |
+| Output capacitor (stages 3 and 4) | 120 mF (sized for $\le \pm 0.44\%$ 100 Hz ripple and $42.2\text{ ms}$ hold-up) |
 | Switching frequency (stages 3 and 4) | 20 kHz (period 5e-5 s) |
 | Solver, stages 1 and 2 | powergui Continuous |
 | Solver, stages 3 and 4 | powergui Discrete, fixed step 1e-6 s |
@@ -100,8 +100,21 @@ The current PI and PWM Generator are replaced by a comparator and an S-R flip-fl
 
 ## How to run
 
-open the .SLX files in your MATLAB simulink and just run..
+**Requirements:** MATLAB with Simulink and Simscape Electrical (the models use the `powergui` block and the Specialized Power Systems library). Add your MATLAB release here: `R20xx`.
 
+```bash
+git clone https://github.com/<your-username>/<repo-name>.git
+cd <repo-name>
+```
+
+Then open the stage you want in MATLAB:
+
+```matlab
+cd('1. Rectifier');                                         open_system('PE')
+cd('../2. ACDC Boost Converter');                           open_system('PE_Boost')
+cd('../3. Cascaded PI Control with Inner and Outer Loop');  open_system('PE_version1')
+cd('../4. SR FlipFlop Control');                            open_system('PE_version2')
+```
 
 Stages 3 and 4 need the powergui set to **Discrete** with sample time `1e-6` and a fixed-step solver with step `1e-6`.
 
@@ -110,7 +123,8 @@ Stages 3 and 4 need the powergui set to **Discrete** with sample time `1e-6` and
 - **Zero-crossing chatter** between the comparator and the power-stage solver stopped the stage 4 simulation. Fix: discrete powergui and a fixed-step solver.
 - **Continuous states** with a fixed-step discrete solver: the PI blocks must be discrete (`PI(z)`).
 - **Pulse Generator sample time:** period and width must be integer multiples of the fixed step.
-- **Output stuck low while the voltage PI sat at its limit:** check that the normalised voltage peaks at 1, that source amplitude and gain agree (peak vs rms), and that the PI limit is realistic for 768 W.
+- **Output stuck low (~38 V) when changing source to 30 V peak:** delivering 768 W requires $I_{pk} = 2P / V_{rec,pk} \approx 54.1\text{ A}$. The voltage PI upper limit must be raised from 45 A to 65 A, and gain `-K-` updated to `1/30` so `[E]` reaches 1.0.
+- **Startup inrush current spike (~700–730 A):** an uncharged $120\text{ mF}$ capacitor at $t=0$ acts as a short circuit through the diode bridge and boost diode, while the 48 V step error saturates the PI loop. Fix: Set the capacitor's **Initial capacitor voltage** to `28 V` or `30 V` (natural pre-charge state), and/or add a Rate Limiter on $V_{ref}$ (soft-start).
 
 Full list: [`docs/troubleshooting.md`](docs/troubleshooting.md).
 
